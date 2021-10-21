@@ -33,3 +33,8 @@ airgradient_sensors:
 
 # Starlink configuration. (Also requires `monitoring_enable`)
 starlink_enable: false
+
+# Wireguard config
+wireguard_peers:
+  - antoine-mbp
+  - antoine-phone

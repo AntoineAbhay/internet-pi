@@ -23,7 +23,7 @@ services:
         published: 49312
         protocol: tcp
     networks:
-      pihole_net:
+      private_network:
         ipv4_address: 10.0.0.2
 
   pihole:
@@ -44,7 +44,7 @@ services:
       PIHOLE_DNS_: '10.0.0.2#5053'
     dns:
       - 127.0.0.1
-      - 8.8.8.8
+      - 10.0.0.2 # Points to cloudflared
     volumes:
       - './etc-pihole/:/etc/pihole/'
       - './etc-dnsmasq.d/:/etc/dnsmasq.d/'
@@ -52,11 +52,44 @@ services:
       - NET_ADMIN
     restart: unless-stopped
     networks:
-      pihole_net:
+      private_network:
         ipv4_address: 10.0.0.3
 
+  # More info https://hub.docker.com/r/linuxserver/wireguard
+  wireguard:
+    depends_on: [cloudflared, pihole]
+    image: lscr.io/linuxserver/wireguard
+    container_name: wireguard
+    cap_add:
+      - NET_ADMIN
+      - SYS_MODULE
+    environment:
+      - PUID=1001
+      - PGID=1001
+      - TZ=Europe/Paris
+      - SERVERURL={{ ipify_public_ip }} #optional
+      - SERVERPORT=51820 #optional
+      - PEERS={{ wireguard_peers |  join(',') }} #optional
+      - PEERDNS=10.0.0.3 # Set it to point to pihole
+      - INTERNAL_SUBNET=10.13.13.0 #optional
+      - ALLOWEDIPS=0.0.0.0/0 #optional
+    volumes:
+      - ../wireguard/config:/config
+      - /lib/modules:/lib/modules
+    ports:
+      - 51820:51820/udp
+    sysctls:
+      - net.ipv4.conf.all.src_valid_mark=1
+    dns:
+      - 10.0.0.3 # Points to pihole
+      - 10.0.0.2 # Points to cloudflared
+    restart: unless-stopped
+    networks:
+      private_network:
+        ipv4_address: 10.0.0.4
+
 networks:
-  pihole_net:
+  private_network:
     driver: bridge
     ipam:
       config:
