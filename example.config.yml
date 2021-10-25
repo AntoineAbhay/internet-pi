@@ -38,3 +38,5 @@ starlink_enable: false
 wireguard_peers:
   - antoine-mbp
   - antoine-phone
+
+wireguard_port: 51820

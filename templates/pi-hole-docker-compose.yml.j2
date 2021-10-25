@@ -27,6 +27,7 @@ services:
         ipv4_address: 10.0.0.2
 
   pihole:
+    depends_on: [cloudflared]
     container_name: pihole
     image: pihole/pihole:latest
     hostname: '{{ pihole_hostname }}'
@@ -68,7 +69,7 @@ services:
       - PGID=1001
       - TZ=Europe/Paris
       - SERVERURL={{ ipify_public_ip }} #optional
-      - SERVERPORT=51820 #optional
+      - SERVERPORT={{ wireguard_port }} #optional
       - PEERS={{ wireguard_peers |  join(',') }} #optional
       - PEERDNS=10.0.0.3 # Set it to point to pihole
       - INTERNAL_SUBNET=10.13.13.0 #optional
@@ -77,7 +78,7 @@ services:
       - ../wireguard/config:/config
       - /lib/modules:/lib/modules
     ports:
-      - 51820:51820/udp
+      - {{ wireguard_port }}:{{ wireguard_port }}/udp
     sysctls:
       - net.ipv4.conf.all.src_valid_mark=1
     dns:
