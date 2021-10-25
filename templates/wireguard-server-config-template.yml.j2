@@ -1,0 +1,52 @@
+# {{ ansible_managed }}
+# This replaces the default server config that comes with the docker image
+[Interface]
+Address = ${INTERFACE}.1
+ListenPort = {{ wireguard_port }}
+PrivateKey = $(cat /config/server/privatekey-server)
+
+
+# My custom iptables rules
+
+# Create chains
+PostUp = iptables -N wg0-filter
+PostUp = iptables -N to-lan
+
+# Pass all traffic to wgo-filter
+PostUp = iptables -I INPUT   -i %i -j wg0-filter
+PostUp = iptables -A FORWARD -i %i -j wg0-filter
+PostUp = iptables -A FORWARD -o %i -j wg0-filter
+PostUp = iptables -I OUTPUT  -o %i -j wg0-filter
+
+PostUp = iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE
+
+# Direct packets to lan
+PostUp = iptables -A wg0-filter -d {{ "{{ ansible_default_ipv4.network }}/{{ ansible_default_ipv4.netmask }}" | ansible.netcommon.ipaddr('net') }} -j to-lan
+
+# Deny access to lan
+
+{% for peer in wireguard_peers %}
+{% if peer.has_lan_access %}
+PostUp = iptables -A to-lan -s 10.13.13.{{ loop.index + 1 }} -j ACCEPT
+{% endif %}
+{% endfor %}
+PostUp = iptables -A to-lan -j REJECT
+
+# Accept everything else
+PostUp = iptables -A wg0-filter -j ACCEPT
+
+
+PostDown = iptables -D INPUT   -i %i -j wg0-filter
+PostDown = iptables -D FORWARD -i %i -j wg0-filter
+PostDown = iptables -D FORWARD -o %i -j wg0-filter
+PostDown = iptables -D OUTPUT  -o %i -j wg0-filter
+
+PostDown = iptables -t nat -D POSTROUTING -o eth0 -j MASQUERADE
+
+# Delete all rules in chain
+PostDown = iptables -F wg0-filter
+PostDown = iptables -F to-lan
+
+# Delete chains
+PostDown = iptables -X wg0-filter
+PostDown = iptables -X to-lan

@@ -37,6 +37,8 @@ starlink_enable: false
 # Wireguard config
 wireguard_enable: true
 wireguard_peers:
-  - antoine-mbp
-  - antoine-phone
+  - name: antoine-mbp
+    has_lan_access: false
+  - name: antoine-phone
+    has_lan_access: true
 wireguard_port: 51820

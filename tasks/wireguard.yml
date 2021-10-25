@@ -1,10 +1,18 @@
 ---
 - name: Create Wireguard folder on Pi.
   ansible.builtin.file:
-    path: "{{ config_dir }}/wireguard"
+    path: "{{ config_dir }}/wireguard/config/templates"
     state: directory
     mode: 0755
   become: false
+
+- name: Copy Wireguard server config template to Pi.
+  ansible.builtin.template:
+    src: templates/wireguard-server-config-template.yml.j2
+    dest: "{{ config_dir }}/wireguard/config/templates/server.conf"
+    mode: '0640'
+  become: false
+  notify: Restart wireguard
 
 - name: Copy Wireguard docker-compose template to Pi.
   ansible.builtin.template:
