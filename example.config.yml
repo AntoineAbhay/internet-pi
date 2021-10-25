@@ -35,8 +35,8 @@ airgradient_sensors:
 starlink_enable: false
 
 # Wireguard config
+wireguard_enable: true
 wireguard_peers:
   - antoine-mbp
   - antoine-phone
-
 wireguard_port: 51820
