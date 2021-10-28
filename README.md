@@ -14,7 +14,9 @@ So that's what this is.
 
 ![Internet Monitoring Dashboard in Grafana](/images/internet-monitoring.png)
 
-**Pi-hole**: Installs the Pi-hole Docker configuration so you can use Pi-hole for network-wide ad-blocking and local DNS. Make sure to update your network router config to direct all DNS queries through your Raspberry Pi if you want to use Pi-hole effectively! Cloudflared is installed to enable DNS over HTTPS.
+**Pi-hole**: Installs the Pi-hole Docker configuration so you can use Pi-hole for network-wide ad-blocking and local DNS. Make sure to update your network router config to direct all DNS queries through your Raspberry Pi if you want to use Pi-hole effectively
+
+**Unbound**: Installs Unbound DNS server.
 
 **Wireguard**: Installs Wireguard VPN. Add wireguard_peers in the config to add VPN clients.
 

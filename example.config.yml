@@ -42,3 +42,9 @@ wireguard_peers:
   - name: antoine-phone
     has_lan_access: true
 wireguard_port: 51820
+
+
+# Unbound config
+unbound:
+  port: 5053
+  use_caps_for_id: "no"

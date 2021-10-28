@@ -8,30 +8,21 @@ networks:
 
 # More info at https://github.com/pi-hole/docker-pi-hole/ and https://docs.pi-hole.net/
 services:
-  cloudflared:
-    container_name: cloudflared
-    restart: unless-stopped
-    image: crazymax/cloudflared
-    command: proxy-dns
-    environment:
-      - "TZ=Europe/Paris"
-      - "TUNNEL_DNS_UPSTREAM=https://1.1.1.1/dns-query,https://1.0.0.1/dns-query,https://9.9.9.9/dns-query,https://149.112.112.9/dns-query"
-      - "TUNNEL_METRICS=0.0.0.0:49312"
-      - "TUNNEL_DNS_ADDRESS=0.0.0.0"
-      - "TUNNEL_DNS_PORT=5053"
-    ports:
-      - target: 5053
-        published: 5053
-        protocol: udp
-      - target: 49312
-        published: 49312
-        protocol: tcp
+  unbound:
+    container_name: unbound
+    image: mvance/unbound-rpi:latest
     networks:
       custom_private_network:
         ipv4_address: 10.0.0.2
+    volumes:
+      - ./etc-unbound/:/opt/unbound/etc/unbound
+    ports:
+      - "5053:{{ unbound.port }}/tcp"
+      - "5053:{{ unbound.port }}/udp"
+    restart: unless-stopped
 
   pihole:
-    depends_on: [cloudflared]
+    depends_on: [unbound]
     container_name: pihole
     image: pihole/pihole:latest
     hostname: '{{ pihole_hostname }}'
@@ -46,10 +37,10 @@ services:
       DNSMASQ_LISTENING: 'local'
       WEBPASSWORD: '{{ pihole_password }}'
       ServerIP: '{{ ansible_facts['default_ipv4']['address'] }}'
-      PIHOLE_DNS_: '10.0.0.2#5053'
+      PIHOLE_DNS_: '10.0.0.2#{{ unbound.port }}'
     dns:
       - 127.0.0.1
-      - 10.0.0.2 # Points to cloudflared
+      - 10.0.0.2 # Points to unbound
     volumes:
       - './etc-pihole/:/etc/pihole/'
       - './etc-dnsmasq.d/:/etc/dnsmasq.d/'

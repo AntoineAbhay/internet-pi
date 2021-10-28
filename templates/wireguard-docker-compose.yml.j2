@@ -34,7 +34,7 @@ services:
       - net.ipv4.conf.all.src_valid_mark=1
     dns:
       - 10.0.0.3 # Points to pihole
-      - 10.0.0.2 # Points to cloudflared
+      - 10.0.0.2 # Points to unbound
     restart: unless-stopped
     networks:
       custom_private_network:
