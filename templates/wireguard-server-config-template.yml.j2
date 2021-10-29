@@ -20,11 +20,15 @@ PostUp = iptables -I OUTPUT  -o %i -j wg0-filter
 
 PostUp = iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE
 
+PostUp = iptables -A wg0-filter -m state --state ESTABLISHED,RELATED -j ACCEPT
+
+# Accept packets to DNS
+PostUp = iptables -A wg0-filter -d 10.0.0.3 -j ACCEPT
+
 # Direct packets to lan
-PostUp = iptables -A wg0-filter -d {{ "{{ ansible_default_ipv4.network }}/{{ ansible_default_ipv4.netmask }}" | ansible.netcommon.ipaddr('net') }} -j to-lan
+PostUp = iptables -A wg0-filter -d 192.168.0.0/16,172.16.0.0/12,10.0.0.0/8 -j to-lan
 
 # Deny access to lan
-
 {% for peer in wireguard_peers %}
 {% if peer.has_lan_access %}
 PostUp = iptables -A to-lan -s 10.13.13.{{ loop.index + 1 }} -j ACCEPT
