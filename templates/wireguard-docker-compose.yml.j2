@@ -10,8 +10,8 @@ networks:
 services:
   # More info https://hub.docker.com/r/linuxserver/wireguard
   wireguard:
-    image: lscr.io/linuxserver/wireguard
-    container_name: wireguard
+    image: monitored_wireguard
+    container_name: monitored_wireguard
     cap_add:
       - NET_ADMIN
       - SYS_MODULE
@@ -30,6 +30,7 @@ services:
       - /lib/modules:/lib/modules
     ports:
       - {{ wireguard_port }}:{{ wireguard_port }}/udp
+      - 9586:9586/tcp
     sysctls:
       - net.ipv4.conf.all.src_valid_mark=1
     dns:
@@ -39,4 +40,3 @@ services:
     networks:
       custom_private_network:
         ipv4_address: 10.0.0.4
-

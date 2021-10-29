@@ -6,12 +6,51 @@
     mode: 0755
   become: false
 
+- name: Copy monitored Wireguard Dockerfile to Pi.
+  ansible.builtin.template:
+    src: templates/monitored-wireguard-dockerfile-template.j2
+    dest: "{{ config_dir }}/wireguard/Dockerfile"
+    mode: '0640'
+  become: false
+  register: wireguard_dockerfile
+  notify: Restart wireguard
+
+- name: Copy Wireguard exporter run script to Pi.
+  ansible.builtin.template:
+    src: templates/wireguard-exporter-run-script.j2
+    dest: "{{ config_dir }}/wireguard/exporter_run_script"
+    mode: '0640'
+  become: false
+  register: exporter_runscript
+  notify: Restart wireguard
+
+# Docker build here if Dockerfile or run-script have changed
+- name: Build Wireguard image.
+  community.docker.docker_image:
+    name: monitored_wireguard
+    source: build
+    force_source: true
+    build:
+      path: "{{ config_dir }}/wireguard/"
+  become: false
+  when: wireguard_dockerfile.changed or exporter_runscript.changed
+  notify: Restart wireguard
+
 - name: Copy Wireguard server config template to Pi.
   ansible.builtin.template:
     src: templates/wireguard-server-config-template.yml.j2
     dest: "{{ config_dir }}/wireguard/config/templates/server.conf"
     mode: '0640'
   become: false
+  notify: Restart wireguard
+  register: config_template
+
+- name: Delete wg0.conf if server config template has changed.
+  ansible.builtin.file:
+    path: "{{ config_dir }}/wireguard/config/wg0.conf"
+    state: absent
+  become: false
+  when: config_template.changed
   notify: Restart wireguard
 
 - name: Copy Wireguard docker-compose template to Pi.

@@ -1,0 +1,12 @@
+FROM lscr.io/linuxserver/wireguard as wireguard
+
+FROM wireguard
+
+COPY --from=mindflavor/prometheus-wireguard-exporter /usr/local/bin/prometheus_wireguard_exporter /usr/local/bin/
+
+WORKDIR /
+
+# copy the runscript execute on startup 
+COPY /exporter_run_script /etc/services.d/prometheus_wireguard_exporter/run
+
+EXPOSE 9586/tcp
