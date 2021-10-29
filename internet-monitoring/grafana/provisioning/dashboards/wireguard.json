@@ -86,7 +86,7 @@
           "refId": "A"
         }
       ],
-      "timeFrom": null,
+      "timeFrom": "1m",
       "timeShift": null,
       "title": "Last handshake",
       "transform": "timeseries_aggregations",
@@ -219,8 +219,8 @@
     "list": []
   },
   "time": {
-    "from": "2021-10-29T00:15:46.763Z",
-    "to": "2021-10-29T00:22:47.710Z"
+    "from": "now-1h",
+    "to": "now"
   },
   "timepicker": {
     "refresh_intervals": [
@@ -249,5 +249,5 @@
   "timezone": "",
   "title": "WireGuard",
   "uid": "c0T_8RkZz",
-  "version": 1
+  "version": 2
 }
