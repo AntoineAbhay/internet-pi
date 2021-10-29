@@ -10,14 +10,23 @@
         "limit": 100,
         "name": "Annotations & Alerts",
         "showIn": 0,
+        "target": {
+          "limit": 100,
+          "matchAny": false,
+          "tags": [],
+          "type": "dashboard"
+        },
         "type": "dashboard"
       }
     ]
   },
   "editable": true,
+  "fiscalYearStartMonth": 0,
   "gnetId": null,
   "graphTooltip": 0,
+  "iteration": 1635502114998,
   "links": [],
+  "liveNow": false,
   "panels": [
     {
       "cacheTimeout": null,
@@ -29,11 +38,13 @@
           },
           "mappings": [
             {
-              "id": 0,
-              "op": "=",
-              "text": "N/A",
-              "type": 1,
-              "value": "null"
+              "options": {
+                "match": "null",
+                "result": {
+                  "text": "N/A"
+                }
+              },
+              "type": "special"
             }
           ],
           "thresholds": {
@@ -76,7 +87,7 @@
         "showThresholdMarkers": true,
         "text": {}
       },
-      "pluginVersion": "7.5.6",
+      "pluginVersion": "8.2.2",
       "targets": [
         {
           "expr": "speedtest_download_bits_per_second{}",
@@ -100,11 +111,13 @@
           },
           "mappings": [
             {
-              "id": 0,
-              "op": "=",
-              "text": "N/A",
-              "type": 1,
-              "value": "null"
+              "options": {
+                "match": "null",
+                "result": {
+                  "text": "N/A"
+                }
+              },
+              "type": "special"
             }
           ],
           "thresholds": {
@@ -147,7 +160,7 @@
         "showThresholdMarkers": true,
         "text": {}
       },
-      "pluginVersion": "7.5.6",
+      "pluginVersion": "8.2.2",
       "targets": [
         {
           "expr": "speedtest_upload_bits_per_second{}",
@@ -172,11 +185,13 @@
           "decimals": 2,
           "mappings": [
             {
-              "id": 0,
-              "op": "=",
-              "text": "N/A",
-              "type": 1,
-              "value": "null"
+              "options": {
+                "match": "null",
+                "result": {
+                  "text": "N/A"
+                }
+              },
+              "type": "special"
             }
           ],
           "thresholds": {
@@ -219,7 +234,7 @@
         "showThresholdMarkers": true,
         "text": {}
       },
-      "pluginVersion": "7.5.6",
+      "pluginVersion": "8.2.2",
       "targets": [
         {
           "expr": "speedtest_ping_latency_milliseconds",
@@ -251,7 +266,8 @@
             "hideFrom": {
               "graph": false,
               "legend": false,
-              "tooltip": false
+              "tooltip": false,
+              "viz": false
             },
             "lineInterpolation": "linear",
             "lineWidth": 0,
@@ -260,7 +276,14 @@
               "type": "linear"
             },
             "showPoints": "never",
-            "spanNulls": true
+            "spanNulls": true,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
           },
           "mappings": [],
           "thresholds": {
@@ -296,7 +319,7 @@
           "displayMode": "list",
           "placement": "right"
         },
-        "tooltipOptions": {
+        "tooltip": {
           "mode": "multi"
         }
       },
@@ -356,10 +379,6 @@
         ]
       },
       "datasource": "prometheus",
-      "fieldConfig": {
-        "defaults": {},
-        "overrides": []
-      },
       "gridPos": {
         "h": 9,
         "w": 12,
@@ -421,10 +440,6 @@
       "dashLength": 10,
       "dashes": false,
       "datasource": "prometheus",
-      "fieldConfig": {
-        "defaults": {},
-        "overrides": []
-      },
       "fill": 1,
       "fillGradient": 0,
       "gridPos": {
@@ -453,7 +468,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.5.6",
+      "pluginVersion": "8.2.2",
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
@@ -512,17 +527,228 @@
         "align": false,
         "alignLevel": null
       }
+    },
+    {
+      "datasource": "prometheus",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "align": "auto",
+            "displayMode": "auto",
+            "filterable": false
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "none"
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Value #A"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Earliest cert expiry"
+              },
+              {
+                "id": "color",
+                "value": {
+                  "mode": "thresholds"
+                }
+              },
+              {
+                "id": "thresholds",
+                "value": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "green",
+                      "value": null
+                    },
+                    {
+                      "color": "red",
+                      "value": 80
+                    }
+                  ]
+                }
+              },
+              {
+                "id": "unit",
+                "value": "dateTimeAsLocalNoDateIfToday"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "humanname"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Website"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Value #B"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Expires in"
+              },
+              {
+                "id": "unit",
+                "value": "d"
+              },
+              {
+                "id": "thresholds",
+                "value": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "dark-red",
+                      "value": null
+                    },
+                    {
+                      "color": "red",
+                      "value": 7
+                    },
+                    {
+                      "color": "orange",
+                      "value": 30
+                    },
+                    {
+                      "color": "#EAB839",
+                      "value": 90
+                    },
+                    {
+                      "color": "green",
+                      "value": 100
+                    }
+                  ]
+                }
+              },
+              {
+                "id": "color",
+                "value": {
+                  "mode": "thresholds"
+                }
+              },
+              {
+                "id": "custom.displayMode",
+                "value": "color-background"
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 27
+      },
+      "id": 16,
+      "maxDataPoints": null,
+      "options": {
+        "showHeader": true,
+        "sortBy": []
+      },
+      "pluginVersion": "8.2.2",
+      "targets": [
+        {
+          "exemplar": true,
+          "expr": "probe_ssl_earliest_cert_expiry * 1000",
+          "format": "table",
+          "instant": true,
+          "interval": "",
+          "legendFormat": "{{humanname}}",
+          "refId": "A"
+        },
+        {
+          "exemplar": true,
+          "expr": "(probe_ssl_earliest_cert_expiry - time()) / (3600 * 24)",
+          "format": "table",
+          "hide": false,
+          "instant": true,
+          "interval": "",
+          "legendFormat": "{{humanname}}",
+          "refId": "B"
+        }
+      ],
+      "title": "Panel Title",
+      "transformations": [
+        {
+          "id": "seriesToColumns",
+          "options": {
+            "byField": "humanname"
+          }
+        },
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "Time": true,
+              "__name__": true,
+              "instance": true,
+              "job": true
+            },
+            "indexByName": {
+              "Time": 1,
+              "Value #A": 5,
+              "Value #B": 4,
+              "humanname": 0,
+              "instance": 2,
+              "job": 3
+            },
+            "renameByName": {
+              "Value": "",
+              "humanname": ""
+            }
+          }
+        }
+      ],
+      "type": "table"
     }
   ],
   "refresh": "5m",
-  "schemaVersion": 27,
+  "schemaVersion": 31,
   "style": "dark",
   "tags": [
     "speedtest",
     "ping"
   ],
   "templating": {
-    "list": []
+    "list": [
+      {
+        "datasource": "prometheus",
+        "description": null,
+        "error": null,
+        "filters": [],
+        "hide": 0,
+        "label": null,
+        "name": "Filters",
+        "skipUrlSync": false,
+        "type": "adhoc"
+      }
+    ]
   },
   "time": {
     "from": "now-7d",
@@ -556,5 +782,5 @@
   "timezone": "browser",
   "title": "Internet connection",
   "uid": "o9mIe_Aik",
-  "version": 12
+  "version": 1
 }
