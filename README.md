@@ -1,6 +1,6 @@
 # Internet Pi
 
-[![CI](https://github.com/geerlingguy/internet-pi/workflows/CI/badge.svg?event=push)](https://github.com/geerlingguy/internet-pi/actions?query=workflow%3ACI)
+[![CI](https://github.com/AntoineAbhay/internet-pi/workflows/CI/badge.svg?event=push)](https://github.com/AntoineAbhay/internet-pi/actions?query=workflow%3ACI)
 
 **A Raspberry Pi Configuration for Internet connectivity**
 
