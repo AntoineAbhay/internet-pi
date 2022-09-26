@@ -41,6 +41,9 @@
       ansible.builtin.import_tasks: tasks/pi-hole.yml
       when: pihole_enable
 
+    - name: Set up Traefik.
+      ansible.builtin.import_tasks: tasks/traefik-setup.yml
+
     - name: Set up Wireguard.
       ansible.builtin.import_tasks: tasks/wireguard.yml
       when: wireguard_enable

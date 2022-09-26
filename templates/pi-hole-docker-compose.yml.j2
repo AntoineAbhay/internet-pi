@@ -10,7 +10,7 @@ networks:
 services:
   unbound:
     container_name: unbound
-    image: mvance/unbound-rpi:latest
+    image: mvance/unbound-rpi:1.13.1
     networks:
       custom_private_network:
         ipv4_address: 10.0.0.2
@@ -30,8 +30,6 @@ services:
       - "53:53/tcp"
       - "53:53/udp"
       - "67:67/udp"
-      - "80:80/tcp"
-      - "443:443/tcp"
     environment:
       TZ: '{{ pihole_timezone }}'
       DNSMASQ_LISTENING: 'local'
@@ -50,4 +48,10 @@ services:
     networks:
       custom_private_network:
         ipv4_address: 10.0.0.3
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.services.pihole.loadbalancer.server.port=80"
+      - "traefik.http.routers.pihole.rule=Host(`pihole.{{ my_domain }}`)"
+      - "traefik.http.routers.pihole.entrypoints=websecure"
+      - "traefik.http.routers.pihole.tls.certresolver=myresolver"
 

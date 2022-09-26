@@ -49,3 +49,5 @@ wireguard_port: 51820
 unbound:
   port: 5053
   use_caps_for_id: "no"
+
+my_domain: "example.com"

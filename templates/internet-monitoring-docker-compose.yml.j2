@@ -6,7 +6,8 @@ volumes:
   grafana_data: {}
 
 networks:
-  front-tier:
+  custom_private_network:
+    external: true
   back-tier:
 
 services:
@@ -38,13 +39,19 @@ services:
       - ./grafana/provisioning/:/etc/grafana/provisioning/
     depends_on:
       - prometheus
-    ports:
-      - 3030:3000
     env_file:
       - ./grafana/config.monitoring
     networks:
-      - back-tier
-      - front-tier
+      back-tier:
+      custom_private_network:
+        ipv4_address: 10.0.0.5
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.services.grafana.loadbalancer.server.port=3000"
+      - "traefik.http.routers.grafana.rule=Host(`grafana.{{ my_domain }}`)"
+      - "traefik.http.routers.grafana.entrypoints=websecure"
+      - "traefik.http.routers.grafana.tls.certresolver=myresolver"
+
 
   ping:
     tty: true

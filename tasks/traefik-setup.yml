@@ -1,0 +1,30 @@
+---
+- name: Create Traefik folder on Pi.
+  ansible.builtin.file:
+    path: "{{ config_dir }}/traefik"
+    state: directory
+    mode: 0755
+  become: false
+
+- name: Create Traefik config folder on Pi.
+  ansible.builtin.file:
+    path: "{{ config_dir }}/traefik/etc"
+    state: directory
+    mode: 0755
+  become: false
+
+- name: Copy Traefik docker-compose template to Pi.
+  ansible.builtin.template:
+    src: templates/traefik-docker-compose.yml.j2
+    dest: "{{ config_dir }}/traefik/docker-compose.yml"
+    mode: '0640'
+  become: false
+  notify: Restart traefik
+
+# TODO: The first time this playbook is run, the `pi` user may not be added
+# to the `docker` group, so this task may fail.
+- name: Ensure Traefik is running.
+  community.docker.docker_compose:
+    project_src: "{{ config_dir }}/traefik/"
+    build: false
+  become: false
