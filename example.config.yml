@@ -52,3 +52,8 @@ unbound:
   use_caps_for_id: "no"
 
 my_domain: "example.com"
+
+dns_challenge:
+  provider: "netlify"
+  env_variable: "NETLIFY_TOKEN"
+  value: "XXX"
