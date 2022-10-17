@@ -29,7 +29,9 @@ services:
     ports:
       - "53:53/tcp"
       - "53:53/udp"
+{% if pihole_dhcp_port %}
       - "67:67/udp"
+{% endif %}
     environment:
       TZ: '{{ pihole_timezone }}'
       DNSMASQ_LISTENING: 'local'
