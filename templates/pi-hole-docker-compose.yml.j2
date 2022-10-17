@@ -16,8 +16,17 @@ services:
     networks:
       custom_private_network:
         ipv4_address: 10.0.0.2
+    expose:
+      - {{ unbound.port | default(53) }}
     volumes:
       - ./etc-unbound/:/opt/unbound/etc/unbound
+    healthcheck:
+      test: drill @127.0.0.1 cloudflare.com -p {{ unbound.port | default(53) }} || exit 1
+      interval: 30s
+      timeout: 30s
+      retries: 3
+      start_period: 10s
+
     restart: unless-stopped
 
   pihole:
