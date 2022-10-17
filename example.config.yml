@@ -45,6 +45,8 @@ wireguard_peers:
     has_lan_access: true
 wireguard_port: 51820
 
+prometheus:
+  expose_port: false
 
 # Unbound config
 unbound:
