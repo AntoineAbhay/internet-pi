@@ -25,7 +25,7 @@ services:
       - '--storage.tsdb.retention.time=90d'
       - '--web.console.libraries=/usr/share/prometheus/console_libraries'
       - '--web.console.templates=/usr/share/prometheus/consoles'
-{% if prometheus.expose_port %}
+{% if internet_monitoring.expose_port %}
     ports:
       - 9090:9090
 {% endif %}
@@ -64,8 +64,10 @@ services:
     stdin_open: true
     expose:
       - 9115
+{% if internet_monitoring.expose_port %}
     ports:
       - 9115:9115
+{% endif %}
     image: prom/blackbox-exporter
     restart: always
     volumes:
@@ -78,8 +80,10 @@ services:
   speedtest:
     expose:
       - 9798
+{% if internet_monitoring.expose_port %}
     ports:
       - 9798:9798
+{% endif %}
     image: miguelndecarvalho/speedtest-exporter
     restart: always
     networks:
@@ -92,8 +96,10 @@ services:
       - /proc:/host/proc:ro
       - /sys:/host/sys:ro
       - /:/rootfs:ro
+{% if internet_monitoring.expose_port %}
     ports:
       - 9100:9100
+{% endif %}
     restart: always
     command:
       - '--path.procfs=/host/proc'
