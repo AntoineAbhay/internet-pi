@@ -8,6 +8,8 @@ volumes:
 networks:
   custom_private_network:
     external: true
+  traefik:
+    external: true
   back-tier:
 
 services:
@@ -43,10 +45,12 @@ services:
       - ./grafana/config.monitoring
     networks:
       back-tier:
+      traefik:
       custom_private_network:
         ipv4_address: 10.0.0.5
     labels:
       - "traefik.enable=true"
+      - "traefik.docker.network=traefik"
       - "traefik.http.services.grafana.loadbalancer.server.port=3000"
       - "traefik.http.routers.grafana.rule=Host(`grafana.{{ my_domain }}`)"
       - "traefik.http.routers.grafana.entrypoints=websecure"

@@ -3,6 +3,8 @@ version: "3.3"
 networks:
   custom_private_network:
     external: true
+  traefik:
+    external: true
 
 services:
 
@@ -25,6 +27,7 @@ services:
       - "--certificatesresolvers.myresolver.acme.email=antoineabhay@gmail.com"
       - "--certificatesresolvers.myresolver.acme.storage=/letsencrypt/acme.json"
     networks:
+      traefik:
       custom_private_network:
         ipv4_address: 10.0.0.6
     ports:
@@ -38,6 +41,7 @@ services:
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
     labels:
       - "traefik.enable=true"
+      - "traefik.docker.network=traefik"
       - "traefik.http.routers.dashboard.rule=Host(`traefik.home.antoineabhay.fr`)"
       - "traefik.http.routers.dashboard.service=api@internal"
       - "traefik.http.routers.dashboard.entrypoints=websecure"
