@@ -6,8 +6,6 @@ volumes:
   grafana_data: {}
 
 networks:
-  custom_private_network:
-    external: true
   traefik:
     external: true
   back-tier:
@@ -48,8 +46,6 @@ services:
     networks:
       back-tier:
       traefik:
-      custom_private_network:
-        ipv4_address: 10.0.0.5
     labels:
       - "traefik.enable=true"
       - "traefik.docker.network=traefik"
