@@ -13,6 +13,13 @@
     mode: 0755
   become: false
 
+- name: Create dnsmasq folder on Pi.
+  ansible.builtin.file:
+    path: "{{ config_dir }}/pi-hole/etc-dnsmasq.d"
+    state: directory
+    mode: 0755
+  become: false
+
 - name: Copy unbound.conf template to Pi.
   ansible.builtin.template:
     src: templates/unbound.conf.j2
@@ -26,6 +33,14 @@
     src: templates/pi-hole-docker-compose.yml.j2
     dest: "{{ config_dir }}/pi-hole/docker-compose.yml"
     mode: '0640'
+  become: false
+  notify: Restart pi-hole
+
+- name: Copy dnsmasq config template to Pi.
+  ansible.builtin.template:
+    src: templates/pi-hole-custom-dns-config.conf.j2
+    dest: "{{ config_dir }}/pi-hole/etc-dnsmasq.d/custom-dns-config.conf"
+    mode: '0644'
   become: false
   notify: Restart pi-hole
 
