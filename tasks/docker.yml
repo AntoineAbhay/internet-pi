@@ -65,13 +65,13 @@
 - name: Reset connection so docker group is picked up.
   meta: reset_connection
 
-- name: Create a network with custom IPAM config
+- name: Create a network with custom IPAM config for dns and vpn
   community.docker.docker_network:
-    name: custom_private_network
+    name: dns_vpn
     driver: bridge
     enable_ipv6: false
     ipam_config:
-      - subnet: 10.0.0.0/29
+      - subnet: 10.0.0.0/24
 
 - name: Create a network with custom IPAM config for traefik exposed containers
   community.docker.docker_network:

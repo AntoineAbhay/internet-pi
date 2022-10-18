@@ -3,7 +3,7 @@
 version: "3"
 
 networks:
-  custom_private_network:
+  dns_vpn:
     external: true
 
 
@@ -38,5 +38,5 @@ services:
       - 10.0.0.2 # Points to unbound
     restart: unless-stopped
     networks:
-      custom_private_network:
+      dns_vpn:
         ipv4_address: 10.0.0.4
