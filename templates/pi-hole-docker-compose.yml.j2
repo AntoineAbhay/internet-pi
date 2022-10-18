@@ -42,9 +42,10 @@ services:
 {% endif %}
     environment:
       TZ: '{{ pihole_timezone }}'
-      DNSMASQ_LISTENING: 'local'
       WEBPASSWORD: '{{ pihole_password }}'
-      ServerIP: '{{ ansible_facts['default_ipv4']['address'] }}'
+      FTLCONF_LOCAL_IPV4: '{{ ansible_facts['default_ipv4']['address'] }}'
+      QUERY_LOGGING: "false"
+      DNSMASQ_LISTENING: 'local'
       PIHOLE_DNS_: '10.0.0.2#{{ unbound.port | default(53) }}'
     dns:
       - 10.0.0.2 # Points to unbound
