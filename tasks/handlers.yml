@@ -13,6 +13,13 @@
     restarted: true
   become: false
 
+- name: Restart nextcloud
+  community.docker.docker_compose:
+    project_src: "{{ config_dir }}/next-cloud/"
+    build: false
+    restarted: true
+  become: false
+
 - name: Restart wireguard
   community.docker.docker_compose:
     project_src: "{{ config_dir }}/wireguard/"

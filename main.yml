@@ -44,6 +44,10 @@
     - name: Set up Traefik.
       ansible.builtin.import_tasks: tasks/traefik-setup.yml
 
+    - name: Set up Nextcloud.
+      ansible.builtin.import_tasks: tasks/nextcloud.yml
+      when: nextcloud_enable
+
     - name: Set up Wireguard.
       ansible.builtin.import_tasks: tasks/wireguard.yml
       when: wireguard_enable

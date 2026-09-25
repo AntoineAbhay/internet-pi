@@ -1,0 +1,37 @@
+# {{ ansible_managed }}
+---
+http:
+  routers:
+    nextcloud:
+      rule: "Host(`nextcloud.{{ my_domain }}`)"
+      entrypoints:
+        - "websecure"
+      service: nextcloud
+      middlewares:
+        - nextcloud-chain
+      tls:
+        certresolver: "myresolver"
+
+  services:
+    nextcloud:
+      loadBalancer:
+        servers:
+          - url: "http://{{ ansible_facts['default_ipv4']['address'] }}:{{ nextcloud_apache_port | default(11000) }}"
+
+  middlewares:
+    nextcloud-secure-headers:
+      headers:
+        hostsProxyHeaders:
+          - "X-Forwarded-Host"
+        referrerPolicy: "same-origin"
+
+    https-redirect:
+      redirectscheme:
+        scheme: https 
+
+    nextcloud-chain:
+      chain:
+        middlewares:
+          # - ... (e.g. rate limiting middleware)
+          - https-redirect
+          - nextcloud-secure-headers

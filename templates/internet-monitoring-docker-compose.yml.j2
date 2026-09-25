@@ -16,7 +16,11 @@ services:
     restart: always
     volumes:
       - ./prometheus/:/etc/prometheus/
+{% if prometheus_data_dir is defined and prometheus_data_dir %}
+      - {{ prometheus_data_dir }}:/prometheus
+{% else %}
       - prometheus_data:/prometheus
+{% endif %}
     command:
       - '--config.file=/etc/prometheus/prometheus.yml'
       - '--storage.tsdb.path=/prometheus'

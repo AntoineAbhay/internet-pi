@@ -1,0 +1,38 @@
+# {{ ansible_managed }}
+---
+# accessLog: {}  # uncomment this line to enable access log
+log:
+  level: DEBUG  # ERROR, DEBUG, PANIC, FATAL, ERROR, WARN, INFO
+providers:
+  docker:
+    exposedByDefault: false
+    network: traefik
+  file:
+    filename: /etc/traefik/dynamic.yml
+    watch: true
+api:
+  dashboard: true # if you don't need the dashboard disable it
+entryPoints:
+  web:
+    address: ':80' # http
+    http:
+      redirections:
+        entryPoint:
+          to: websecure
+          scheme: https      
+  websecure:
+    address: ':443' # https
+certificatesResolvers:
+  myresolver:
+    acme:
+      dnsChallenge:
+        provider: {{ dns_challenge.provider | default('ovh') }}
+        resolvers:
+          - "1.1.1.1:53"
+          - "8.8.8.8:53"
+      #caServer: https://acme-staging-v02.api.letsencrypt.org/directory # IMPORTANT: uncomment this line to get production ready certificates. After this, clear acme.json file.
+      email: {{ dns_challenge.email | default('antoineabhay@gmail.com') }}
+      storage: /letsencrypt/acme.json # chmod 600 this file on the host system
+global:
+  checkNewVersion: true
+  sendAnonymousUsage: false

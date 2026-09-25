@@ -150,11 +150,23 @@ server:
     # Ignore very small EDNS buffer sizes from queries.
     harden-short-bufsize: yes
 
+    # If enabled the HTTP header User-Agent is not set. Use with  caution
+    # as some webserver configurations may reject HTTP requests lacking
+    # this header. If needed, it is better to explicitly set the
+    # the http-user-agent.
+    # hide-http-user-agent: no
+
     # Refuse id.server and hostname.bind queries
     hide-identity: yes
 
     # Refuse version.server and version.bind queries
     hide-version: yes
+
+    # Set the HTTP User-Agent header for outgoing HTTP requests. If
+    # set to "", the default, then the package name  and  version  are
+    #  used.
+    
+    # http-user-agent: "DNS"
 
     # Report this identity rather than the hostname of the server.
     identity: "DNS"
@@ -226,7 +238,7 @@ server:
     # Number  of  bytes  size  of  the  message  cache.
     # Unbound recommendation is to Use roughly twice as much rrset cache memory
     # as you use msg cache memory.
-    msg-cache-size: 1290361514
+    msg-cache-size: 1181093205
 
     # Number of slabs in the message cache. Slabs reduce lock contention by
     # threads. Must be set to a power of 2. Setting (close) to the number of
@@ -254,7 +266,7 @@ server:
 
     # Number of bytes size of the RRset cache.
     # Use roughly twice as much rrset cache memory as msg cache memory
-    rrset-cache-size: 2580723029
+    rrset-cache-size: 2362186410
 
     # Number of slabs in the RRset cache. Slabs reduce lock contention by
     # threads. Must be set to a power of 2.
@@ -309,4 +321,3 @@ remote-control:
     control-enable: no
 
 
-   

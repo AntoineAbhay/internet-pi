@@ -1,0 +1,24 @@
+# {{ ansible_managed }}
+---
+services:
+  nextcloud-aio-mastercontainer:
+    image: nextcloud/all-in-one:latest
+    init: true
+    restart: always
+    container_name: nextcloud-aio-mastercontainer
+    volumes:
+      - nextcloud_aio_mastercontainer:/mnt/docker-aio-config
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    ports:
+      - 8080:8080
+      - 8443:8443
+    environment:
+      - SKIP_DOMAIN_VALIDATION=true
+      - APACHE_PORT={{ nextcloud_apache_port | default(11000) }}
+      - APACHE_IP_BINDING=0.0.0.0
+      - NEXTCLOUD_DATADIR={{ nextcloud_datadir | default('/mnt/data/ncdata') }}
+      - NEXTCLOUD_MOUNT={{ nextcloud_mount | default('/mnt/data') }}
+
+volumes:
+  nextcloud_aio_mastercontainer:
+    name: nextcloud_aio_mastercontainer

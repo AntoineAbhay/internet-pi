@@ -42,13 +42,15 @@ services:
 {% endif %}
     environment:
       TZ: '{{ pihole_timezone }}'
-      WEBPASSWORD: '{{ pihole_password }}'
-      FTLCONF_LOCAL_IPV4: '{{ ansible_facts['default_ipv4']['address'] }}'
-      QUERY_LOGGING: "false"
-      DNSMASQ_LISTENING: 'local'
-      PIHOLE_DNS_: '10.0.0.2#{{ unbound.port | default(53) }}'
+      FTLCONF_webserver_api_password: '{{ pihole_password }}'
+      FTLCONF_dns_reply_host_IPv4: '{{ ansible_facts['default_ipv4']['address'] }}'
+      FTLCONF_dns_queryLogging: "false"
+      FTLCONF_dns_listeningMode: "single"
+      FTLCONF_dns_upstreams: "10.0.0.2#{{ unbound.port | default(53) }}"
+      FTLCONF_misc_etc_dnsmasq_d: "true"
     dns:
       - 10.0.0.2 # Points to unbound
+      - 8.8.8.8
     volumes:
       - './etc-pihole/:/etc/pihole/'
       - './etc-dnsmasq.d/:/etc/dnsmasq.d/'

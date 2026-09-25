@@ -73,7 +73,16 @@ scrape_configs:
     static_configs:
       - targets: ['nodeexp:9100']
 
+{% if wireguard_enable %}
   - job_name: 'wireguard'
     scrape_interval: 5s
     static_configs:
       - targets: [{{ ansible_facts['default_ipv4']['address'] }}:9586]
+{% endif %}
+
+{% if atmosphere_enable | default(false) %}
+  - job_name: 'atmosphere'
+    scrape_interval: 60s
+    static_configs:
+      - targets: [{{ atmosphere_target | default('192.168.8.3:5000') }}]
+{% endif %}

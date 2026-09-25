@@ -8,10 +8,33 @@
 
 - name: Create Traefik config folder on Pi.
   ansible.builtin.file:
-    path: "{{ config_dir }}/traefik/etc"
+    path: "{{ config_dir }}/traefik/config"
     state: directory
     mode: 0755
   become: false
+
+- name: Create Traefik letsencrypt folder on Pi.
+  ansible.builtin.file:
+    path: "{{ config_dir }}/traefik/letsencrypt"
+    state: directory
+    mode: 0755
+  become: false
+
+- name: Copy Traefik static configuration to Pi.
+  ansible.builtin.template:
+    src: templates/traefik.yml.j2
+    dest: "{{ config_dir }}/traefik/config/traefik.yml"
+    mode: '0644'
+  become: false
+  notify: Restart traefik
+
+- name: Copy Traefik dynamic configuration to Pi.
+  ansible.builtin.template:
+    src: templates/dynamic.yml.j2
+    dest: "{{ config_dir }}/traefik/config/dynamic.yml"
+    mode: '0644'
+  become: false
+  notify: Restart traefik
 
 - name: Copy Traefik docker-compose template to Pi.
   ansible.builtin.template:

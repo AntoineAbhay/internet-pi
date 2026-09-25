@@ -2,6 +2,12 @@
 # Location where configuration files will be stored.
 config_dir: '~'
 
+# Nextcloud configuration.
+nextcloud_enable: false
+nextcloud_datadir: /mnt/data/ncdata
+nextcloud_mount: /mnt/data
+nextcloud_apache_port: 11000
+
 # Pi-hole configuration.
 pihole_enable: true
 pihole_hostname: pihole
@@ -14,6 +20,9 @@ monitoring_enable: true
 monitoring_grafana_admin_password: "admin"
 monitoring_speedtest_interval: 60m
 monitoring_ping_interval: 5s
+prometheus_data_dir: ""
+atmosphere_enable: false
+atmosphere_target: "192.168.8.3:5000"
 monitoring_ping_hosts:  # [URL];[HUMAN_READABLE_NAME]
   - http://www.google.com/;google.com
   - https://github.com/;github.com
@@ -37,7 +46,7 @@ airgradient_sensors:
 starlink_enable: false
 
 # Wireguard config
-wireguard_enable: true
+wireguard_enable: false
 wireguard_peers:
   - name: antoine-mbp
     has_lan_access: false
@@ -56,6 +65,10 @@ unbound:
 my_domain: "example.com"
 
 dns_challenge:
-  provider: "netlify"
-  env_variable: "NETLIFY_TOKEN"
-  value: "XXX"
+  provider: "ovh"
+  email: "your-email@example.com"
+  env:
+    OVH_APPLICATION_KEY: "XXX"
+    OVH_APPLICATION_SECRET: "XXX"
+    OVH_CONSUMER_KEY: "XXX"
+    OVH_ENDPOINT: "ovh-eu"
