@@ -72,3 +72,12 @@ dns_challenge:
     OVH_APPLICATION_SECRET: "XXX"
     OVH_CONSUMER_KEY: "XXX"
     OVH_ENDPOINT: "ovh-eu"
+
+# Home Assistant configuration.
+homeassistant_enable: false
+homeassistant_hostname: homeassistant
+homeassistant_timezone: "Europe/Paris"
+# Expose port 8123 directly on host (default: true). Required for initial setup
+# and onboarding to configure reverse proxy trust in Settings -> System -> Network.
+# Once configured, set to false to route exclusively through Traefik.
+homeassistant_expose_port: true

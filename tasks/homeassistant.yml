@@ -1,0 +1,42 @@
+---
+- name: Create Home Assistant folder on Pi.
+  ansible.builtin.file:
+    path: "{{ config_dir }}/homeassistant"
+    state: directory
+    mode: '0755'
+  become: false
+
+- name: Create initial Home Assistant configuration.yaml if not present.
+  ansible.builtin.template:
+    src: templates/homeassistant-configuration.yaml.j2
+    dest: "{{ config_dir }}/homeassistant/configuration.yaml"
+    mode: '0640'
+    force: false
+  become: false
+  notify: Restart homeassistant
+
+- name: Ensure Home Assistant include files exist.
+  ansible.builtin.copy:
+    content: "{% if item == 'scripts.yaml' %}{}\n{% else %}[]\n{% endif %}"
+    dest: "{{ config_dir }}/homeassistant/{{ item }}"
+    force: false
+    mode: '0640'
+  loop:
+    - automations.yaml
+    - scripts.yaml
+    - scenes.yaml
+  become: false
+
+- name: Copy Home Assistant docker-compose template to Pi.
+  ansible.builtin.template:
+    src: templates/homeassistant-docker-compose.yml.j2
+    dest: "{{ config_dir }}/homeassistant/docker-compose.yml"
+    mode: '0640'
+  become: false
+  notify: Restart homeassistant
+
+- name: Ensure Home Assistant is running.
+  community.docker.docker_compose:
+    project_src: "{{ config_dir }}/homeassistant/"
+    build: false
+  become: false

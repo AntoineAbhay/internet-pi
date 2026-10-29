@@ -1,0 +1,36 @@
+# {{ ansible_managed }}
+---
+version: "3"
+
+networks:
+  traefik:
+    external: true
+
+services:
+  homeassistant:
+    container_name: homeassistant
+    image: ghcr.io/home-assistant/home-assistant:stable
+    restart: unless-stopped
+    volumes:
+      - "./:/config"
+      - "/etc/localtime:/etc/localtime:ro"
+    environment:
+      TZ: '{{ homeassistant_timezone | default("Europe/Paris") }}'
+    networks:
+      - traefik
+{% if homeassistant_expose_port | default(true) %}
+    # Port mapping for initial setup / onboarding or direct local access.
+    # Because Home Assistant deprecated static HTTP reverse proxy configuration in YAML,
+    # port 8123 must be accessible directly via LAN IP on first boot to allow onboarding
+    # and configuring reverse proxy trust in Settings -> System -> Network.
+    # Set `homeassistant_expose_port: false` once configured if you want pure Traefik routing.
+    ports:
+      - "8123:8123"
+{% endif %}
+    labels:
+      - "traefik.enable=true"
+      - "traefik.docker.network=traefik"
+      - "traefik.http.services.homeassistant.loadbalancer.server.port=8123"
+      - "traefik.http.routers.homeassistant.rule=Host(`{{ homeassistant_hostname | default('homeassistant') }}.{{ my_domain }}`)"
+      - "traefik.http.routers.homeassistant.entrypoints=websecure"
+      - "traefik.http.routers.homeassistant.tls.certresolver=myresolver"
