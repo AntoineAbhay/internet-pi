@@ -14,16 +14,19 @@ So that's what this is.
 
 ![Internet Monitoring Dashboard in Grafana](/images/internet-monitoring.png)
 
-**Pi-hole**: Installs the Pi-hole Docker configuration so you can use Pi-hole for network-wide ad-blocking and local DNS. Make sure to update your network router config to direct all DNS queries through your Raspberry Pi if you want to use Pi-hole effectively
+**Pi-hole**: Installs the Pi-hole Docker configuration so you can use Pi-hole for network-wide ad-blocking and local DNS. Make sure to update your network router config to direct all DNS queries through your Raspberry Pi if you want to use Pi-hole effectively.
 
-**Unbound**: Installs Unbound DNS server.
+**Unbound**: Installs Unbound DNS server for recursive, privacy-respecting DNS resolution.
 
-**Wireguard**: Installs Wireguard VPN. Add wireguard_peers in the config to add VPN clients.
+**Traefik**: Installs Traefik reverse proxy with automated Let's Encrypt TLS certificates (via DNS challenge) to route and secure all web services on your domain.
+
+**Wireguard**: Installs Wireguard VPN. Add `wireguard_peers` in the config to add VPN clients.
 
 ![Pi-hole on the Internet Pi](/images/pi-hole.png)
 
 Other features:
 
+  - **Nextcloud**: Installs Nextcloud All-in-One routed via Traefik with configurable storage mounts (`nextcloud_mount`). (Disabled by default. Enable using `nextcloud_enable` in `config.yml`.)
   - **Shelly Plug Monitoring**: Installs a [`shelly-plug-prometheus` exporter](https://github.com/geerlingguy/shelly-plug-prometheus) and a Grafana dashboard, which tracks and displays power usage on a Shelly Plug running on the local network. (Disabled by default. Enable and configure using the `shelly_plug_*` vars in `config.yml`.)
   - **AirGradient Monitoring**: Configures [`airgradient-prometheus`](https://github.com/geerlingguy/airgradient-prometheus) and a Grafana dashboard, which tracks and displays air quality over time via one or more AirGradient DIY monitors. (Disabled by default. Enable and configure using the `airgradient_enable` var in `config.yml`. See example configuration for ability to monitor multiple AirGradient DIY stations.)
   - **Starlink Monitoring**: Installs a [`starlink` prometheus exporter](https://github.com/danopstech/starlink_exporter) and a Grafana dashboard, which tracks and displays Starlink statistics. (Disabled by default. Enable and configure using the `starlink_enable` var in `config.yml`.)
@@ -48,7 +51,7 @@ It should also work with Ubuntu for Pi, or Arch Linux, but has not been tested o
   1. [Install Ansible](https://docs.ansible.com/ansible/latest/installation_guide/intro_installation.html). The easiest way (especially on Pi or a Debian system) is via Pip:
      1. (If on Pi/Debian): `sudo apt-get install -y python3-pip`
      2. (Everywhere): `pip3 install ansible`
-  2. Clone this repository: `git clone https://github.com/geerlingguy/internet-pi.git`, then enter the repository directory: `cd internet-pi`.
+  2. Clone this repository: `git clone https://github.com/AntoineAbhay/internet-pi.git`, then enter the repository directory: `cd internet-pi`.
   3. Install requirements: `ansible-galaxy collection install -r requirements.yml` (if you see `ansible-galaxy: command not found`, restart your SSH session or reboot the Pi and try again)
   4. Make copies of the following files and customize them to your liking:
      - `example.inventory.ini` to `inventory.ini` (replace IP address with your Pi's IP, or comment that line and uncomment the `connection=local` line if you're running it on the Pi you're setting up).
@@ -59,30 +62,31 @@ It should also work with Ubuntu for Pi, or Arch Linux, but has not been tested o
 
 ## Usage
 
-### Pi-hole
+All web interfaces are routed securely through Traefik using HTTPS under your configured domain (`my_domain` in `config.yml`). Raw HTTP ports (like `:3030` for Grafana or `:80` for Pi-hole web) are intentionally not published to the host for reverse-proxy security and consistency.
 
-Visit the Pi's IP address (e.g. http://192.168.1.10/) and use the `pihole_password` you configured in your `config.yml` file.
+### Web Services Access
+- **Grafana**: Access at `https://grafana.<my_domain>` using username `admin` and your `monitoring_grafana_admin_password`.
+- **Pi-hole Web Interface**: Access at `https://pihole.<my_domain>` and log in with your `pihole_password`.
+- **Traefik Dashboard**: Access at `https://traefik.<my_domain>`.
+- **Home Assistant**: (If enabled) Access at `https://homeassistant.<my_domain>` (see [Home Assistant Water Heater Guide](docs/home-assistant-water-heater-guide.md)).
+- **Nextcloud**: (If enabled) Access at `https://nextcloud.<my_domain>`.
 
-### Grafana
-
-Visit the Pi's IP address with port 3030 (e.g. http://192.168.1.10:3030/), and log in with username `admin` and the password `monitoring_grafana_admin_password` you configured in your `config.yml`.
-
-> Note: The `monitoring_grafana_admin_password` is only used the first time Grafana starts up; if you need to change it later, do it via Grafana's admin UI.
+### DNS & Network Services
+- **DNS (Pi-hole + Unbound)**: Listen directly on the Pi's IP address on port `53/tcp` and `53/udp`. Configure your network router's DHCP settings to distribute the Pi's IP address as your primary DNS server.
+- **Wireguard VPN**: Connect to your Wireguard endpoint on port `51820/udp`.
 
 ## Updating
 
-To upgrade Pi-hole to the latest version, run the following commands:
+To manually pull new container images and recreate a service (e.g. Pi-hole), run:
 
 ```bash
-cd ~/pi-hole # 
-docker-compose pull             # pulls the latest images
-docker-compose up -d --no-deps  # restarts containers with newer images
-docker system prune --all       # deletes unused images
+cd ~/pi-hole
+docker compose pull             # pulls the latest images
+docker compose up -d --no-deps  # restarts containers with newer images
+docker system prune -f          # cleans up unused dangling images
 ```
 
-Upgrades for the other configurations are similar (go into the directory, and run the same `docker-compose` commands. Make sure to `cd` into the `config_dir` that you use in your `config.yml` file.
-
-At some point in the future, a dedicated upgrade playbook may be added, but for now, upgrades may be performed manually as shown above.
+Upgrades for the other configurations are identical (navigate into the desired folder in your `config_dir` and run the same `docker compose` commands). Alternatively, re-running the Ansible playbook (`ansible-playbook -i inventory.ini main.yml`) will ensure all containers and configurations are up to date.
 
 ## Backups
 

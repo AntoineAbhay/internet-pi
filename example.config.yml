@@ -21,6 +21,7 @@ monitoring_grafana_admin_password: "admin"
 monitoring_speedtest_interval: 60m
 monitoring_ping_interval: 5s
 prometheus_data_dir: ""
+prometheus_tsdb_retention_time: "90d"
 atmosphere_enable: false
 atmosphere_target: "192.168.8.3:5000"
 monitoring_ping_hosts:  # [URL];[HUMAN_READABLE_NAME]

@@ -15,7 +15,7 @@
   notify: Restart nextcloud
 
 - name: Ensure Nextcloud is running.
-  community.docker.docker_compose:
+  community.docker.docker_compose_v2:
     project_src: "{{ config_dir }}/next-cloud/"
-    build: false
+    build: never
   become: false

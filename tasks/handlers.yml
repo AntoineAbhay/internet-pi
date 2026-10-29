@@ -1,56 +1,56 @@
 ---
 - name: Restart pi-hole
-  community.docker.docker_compose:
+  community.docker.docker_compose_v2:
     project_src: "{{ config_dir }}/pi-hole/"
-    build: false
-    restarted: true
+    build: never
+    state: restarted
   become: false
 
 - name: Restart traefik
-  community.docker.docker_compose:
+  community.docker.docker_compose_v2:
     project_src: "{{ config_dir }}/traefik/"
-    build: false
-    restarted: true
+    build: never
+    state: restarted
   become: false
 
 - name: Restart nextcloud
-  community.docker.docker_compose:
+  community.docker.docker_compose_v2:
     project_src: "{{ config_dir }}/next-cloud/"
-    build: false
-    restarted: true
+    build: never
+    state: restarted
   become: false
 
 - name: Restart wireguard
-  community.docker.docker_compose:
+  community.docker.docker_compose_v2:
     project_src: "{{ config_dir }}/wireguard/"
-    build: false
-    restarted: true
+    build: never
+    state: restarted
   become: false
 
 - name: Restart internet-monitoring
-  community.docker.docker_compose:
+  community.docker.docker_compose_v2:
     project_src: "{{ config_dir }}/internet-monitoring/"
-    build: false
-    restarted: true
+    build: never
+    state: restarted
   become: false
 
 - name: Restart shelly-plug-prometheus
-  community.docker.docker_compose:
+  community.docker.docker_compose_v2:
     project_src: "{{ config_dir }}/shelly-plug-prometheus/"
-    build: false
-    restarted: true
+    build: never
+    state: restarted
   become: false
 
 - name: Restart starlink-exporter
-  community.docker.docker_compose:
+  community.docker.docker_compose_v2:
     project_src: "{{ config_dir }}/starlink-exporter/"
-    build: false
-    restarted: true
+    build: never
+    state: restarted
   become: false
 
 - name: Restart homeassistant
-  community.docker.docker_compose:
+  community.docker.docker_compose_v2:
     project_src: "{{ config_dir }}/homeassistant/"
-    build: false
-    restarted: true
+    build: never
+    state: restarted
   become: false
