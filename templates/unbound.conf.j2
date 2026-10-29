@@ -18,7 +18,7 @@ server:
     cache-min-ttl: 300
 
     # Set the working directory for the program.
-    directory: "/opt/unbound/etc/unbound"
+    directory: "/var/unbound"
 
     # RFC 6891. Number  of bytes size to advertise as the EDNS reassembly buffer
     # size. This is the value put into  datagrams over UDP towards peers.
@@ -41,7 +41,7 @@ server:
     rrset-roundrobin: yes
 
     # Drop user  privileges after  binding the port.
-    username: "_unbound"
+    username: "unbound"
 
     ###########################################################################
     # LOGGING
@@ -112,11 +112,11 @@ server:
 
     # File with trust anchor for  one  zone, which is tracked with RFC5011
     # probes.
-    auto-trust-anchor-file: "var/root.key"
+    auto-trust-anchor-file: "root.key"
 
     # Enable chroot (i.e, change apparent root directory for the current
     # running process and its children)
-    chroot: "/opt/unbound/etc/unbound"
+    chroot: ""
 
     # Deny queries of type ANY with an empty response.
     deny-any: yes
@@ -238,7 +238,7 @@ server:
     # Number  of  bytes  size  of  the  message  cache.
     # Unbound recommendation is to Use roughly twice as much rrset cache memory
     # as you use msg cache memory.
-    msg-cache-size: 1181093205
+    msg-cache-size: 32m
 
     # Number of slabs in the message cache. Slabs reduce lock contention by
     # threads. Must be set to a power of 2. Setting (close) to the number of
@@ -266,7 +266,7 @@ server:
 
     # Number of bytes size of the RRset cache.
     # Use roughly twice as much rrset cache memory as msg cache memory
-    rrset-cache-size: 2362186410
+    rrset-cache-size: 64m
 
     # Number of slabs in the RRset cache. Slabs reduce lock contention by
     # threads. Must be set to a power of 2.

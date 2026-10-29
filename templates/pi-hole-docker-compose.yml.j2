@@ -10,20 +10,20 @@ networks:
 services:
   unbound:
     container_name: unbound
-    image: mvance/unbound-rpi:1.13.1
+    image: klutchell/unbound:latest
     networks:
       dns_vpn:
         ipv4_address: 10.0.0.2
     expose:
       - {{ unbound.port | default(53) }}
     volumes:
-      - ./etc-unbound/:/opt/unbound/etc/unbound
+      - ./etc-unbound/unbound.conf:/etc/unbound/unbound.conf:ro
     healthcheck:
-      test: drill @127.0.0.1 cloudflare.com -p {{ unbound.port | default(53) }} || exit 1
+      test: ["CMD", "drill-hc", "-p", "{{ unbound.port | default(53) }}", "cloudflare.com", "@127.0.0.1"]
       interval: 30s
       timeout: 30s
       retries: 3
-      start_period: 10s
+      start_period: 15s
 
     restart: unless-stopped
 
@@ -43,7 +43,7 @@ services:
       FTLCONF_webserver_api_password: '{{ pihole_password }}'
       FTLCONF_dns_reply_host_IPv4: '{{ ansible_facts['default_ipv4']['address'] }}'
       FTLCONF_dns_queryLogging: "false"
-      FTLCONF_dns_listeningMode: "single"
+      FTLCONF_dns_listeningMode: "ALL"
       FTLCONF_dns_upstreams: "10.0.0.2#{{ unbound.port | default(53) }}"
       FTLCONF_misc_etc_dnsmasq_d: "true"
     dns:
